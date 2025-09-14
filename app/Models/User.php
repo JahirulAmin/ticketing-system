@@ -47,4 +47,9 @@ class User extends Authenticatable
             'role' => 'string',
         ];
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }
