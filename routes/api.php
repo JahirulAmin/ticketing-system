@@ -13,7 +13,7 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        return Auth()->user();
     });
     Route::apiResource('tickets', TicketController::class);
     Route::apiResource('tickets/{ticket}/comments', CommentController::class)->shallow();
