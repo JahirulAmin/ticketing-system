@@ -2,6 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\TicketController;
 use Illuminate\Support\Facades\Request;
@@ -18,4 +19,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('tickets/{ticket}/comments', CommentController::class)->shallow();
     Route::get('/tickets/{ticket}/status', [TicketController::class, 'status']);
     Route::put('/tickets/{ticket}/status', [TicketController::class, 'updateStatus']);
+    Route::apiResource('tickets/{ticket}/chats', ChatController::class)->only(['index', 'store']);
 });
