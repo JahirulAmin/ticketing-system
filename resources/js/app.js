@@ -49,10 +49,9 @@ const fetchUser = async () => {
 
 const app = createApp(App);
 app.use(router);
-app.provide('user', user); // Provide reactive user
-app.provide('fetchUser', fetchUser); // Provide fetch method
+app.provide('user', user); 
+app.provide('fetchUser', fetchUser); 
 
-// Fetch user on mount if token exists
 app.mount('#app').$nextTick(() => {
   if (token) {
     fetchUser();

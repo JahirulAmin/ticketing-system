@@ -5,11 +5,12 @@
       <!-- Comments -->
       <div class="bg-white shadow rounded-2xl p-6 flex flex-col">
         <h5 class="text-2xl font-bold mb-4">🎫 Ticket Details</h5>
-        <div class="grid grid-cols-2 ">
-          <p><strong>Subject:</strong> {{ ticket.subject }}</p>
-          <p><strong>Category:</strong> {{ ticket.category }}</p>
-          <p><strong>Priority:</strong> {{ ticket.priority }}</p>
-          <p><strong>Status:</strong> {{ ticket.status }}</p>
+        <hr class="my-2">
+        <div>
+          <p class="p-0 m-0"><strong>Subject:</strong> {{ ticket.subject }}</p>
+          <p class="p-0 m-0"><strong>Category:</strong> {{ ticket.category }}</p>
+          <p class="p-0 m-0"><strong>Priority:</strong> {{ ticket.priority }}</p>
+          <p class="p-0 m-0"><strong>Status:</strong> {{ ticket.status }}</p>
         </div>
         <div v-if="user.role === 'admin'" class="mt-4">
           <label class="block font-semibold mb-2">Update Status</label>
@@ -27,7 +28,7 @@
               {{ comment.user.name }}
             </p>
             <p class="text-gray-700">{{ comment.comment }}</p>
-            <small class="text-gray-500">{{ comment.created_at }}</small>
+            <small class="text-gray-500">{{ formatDate(comment.created_at) }}</small>
           </div>
         </div>
 
@@ -42,34 +43,44 @@
       </div>
 
       <!-- Chat -->
-      <div class="bg-white shadow rounded-2xl p-6 flex flex-col">
-        <h3 class="text-xl font-semibold mb-4">📨 Chat with Admin</h3>
-        <div class="flex-1 space-y-3 overflow-hidden">
-          <div v-for="chat in chats" :key="chat.id" :class="chat.user.id === user.id ? 'text-right' : 'text-left'">
+      <div class="bg-white shadow rounded-2xl flex flex-col h-full">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b flex items-center justify-between">
+          <h5 class="text-lg font-semibold">💬 Chat with Admin</h5>
+        </div>
+
+        <!-- Messages -->
+        <div class="flex-1 min-h-[200px] max-h-[360px] px-6 py-4 space-y-4 overflow-y-auto bg-gray-50">
+          <div v-for="chat in chats" :key="chat.id" class="flex"
+            :class="chat.user.id === user.id ? 'justify-end' : 'justify-start'">
             <div :class="[
-              'inline-block px-4 py-2 rounded-xl',
+              'max-w-xs md:max-w-sm min-w-xs px-4 py-2 rounded-2xl shadow-sm',
               chat.user.id === user.id
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-800'
+                ? 'bg-blue-600 text-white rounded-br-none'
+                : 'bg-gray-200 text-gray-900 rounded-bl-none'
             ]">
-              <p class="font-medium">{{ chat.user.name }}</p>
-              <p>{{ chat.message }}</p>
-              <small class="block text-xs text-gray-500">
-                {{ chat.created_at }}
-              </small>
+              <div class="flex justify-between items-baseline mb-1">
+                <p class="text-sm font-medium">{{ chat.user.name }}</p>
+                <span class="text-xs block mt-1" :class="chat.user.id === user.id ? 'text-gray-200' : 'text-gray-500'">
+                {{ formatDate(chat.created_at) }}
+              </span>
+              </div>
+              <p class="text-sm leading-relaxed">{{ chat.message }}</p>
+              
             </div>
           </div>
         </div>
 
-        <!-- Chat input -->
-        <form @submit.prevent="sendMessage" class="mt-4 flex gap-2">
-          <input v-model="newMessage" type="text" placeholder="Type a message..." class="flex-1 border rounded-lg p-2"
-            required>
-          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+        <!-- Input -->
+        <form @submit.prevent="sendMessage" class="px-4 py-3 border-t flex items-center gap-2 bg-white">
+          <input v-model="newMessage" type="text" placeholder="Aa"
+            class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700">
             Send
           </button>
         </form>
       </div>
+
     </div>
   </div>
 </template>
@@ -117,15 +128,16 @@ export default {
 
       // Real-time chat with Echo
       if (window.Echo) {
+        console.log('Subscribing to channel: ticket.' + route.params.id);
         window.Echo.channel(`ticket.${route.params.id}`)
-          .listen('TicketChatSent', (e) => {
-            chats.value.unshift(e.chat);
+          .listen('TicketChatSent', (e) => {  
+            chats.value.push(e.chat);
           });
       }
 
       // Poll for comments if real-time fails (fallback)
-      const pollInterval = setInterval(fetchData, 5000);
-      onUnmounted(() => clearInterval(pollInterval));
+      // const pollInterval = setInterval(fetchData, 5000);
+      // onUnmounted(() => clearInterval(pollInterval));
     });
 
     onUnmounted(() => {
@@ -175,6 +187,15 @@ export default {
       }
     };
 
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      }).format(date);
+    };
+
     return {
       ticket,
       comments,
@@ -187,6 +208,7 @@ export default {
       addComment,
       sendMessage,
       updateStatus,
+      formatDate,
     };
   },
 };

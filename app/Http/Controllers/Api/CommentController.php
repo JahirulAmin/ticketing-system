@@ -10,7 +10,6 @@ class CommentController extends Controller
 {
     public function index(Ticket $ticket)
     {
-        // Auth check for ticket access (reuse from TicketController logic)
         if (Auth::user()->role !== 'admin' && $ticket->user_id !== Auth::id()) {
             abort(403);
         }
@@ -19,7 +18,6 @@ class CommentController extends Controller
 
     public function store(Request $request, Ticket $ticket)
     {
-        // Auth check
         if (Auth::user()->role !== 'admin' && $ticket->user_id !== Auth::id()) {
             abort(403);
         }
@@ -34,7 +32,6 @@ class CommentController extends Controller
         return response()->json($comment->load('user'), 201);
     }
 
-    // Update and delete similar, with auth checks
     public function update(Request $request, Comment $comment)
     {
         if ($comment->ticket->user_id !== Auth::id() && Auth::user()->role !== 'admin') abort(403);

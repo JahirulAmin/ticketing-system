@@ -5,7 +5,6 @@
         <div class="card-body">
           <h3>Register</h3>
           <form @submit.prevent="register">
-            <!-- Register a user -->
             <div class="mb-3">
               <input v-model="form.name" type="name" class="form-control" placeholder="Name" required>
             </div>

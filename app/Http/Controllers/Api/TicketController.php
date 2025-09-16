@@ -13,9 +13,9 @@ class TicketController extends Controller
     { 
         $user = Auth::user();
         if ($user->role === 'admin') {
-            $tickets = Ticket::with(['user', 'comments'])->get();
+            $tickets = Ticket::with(['user', 'comments'])->latest()->get();
         } else {
-            $tickets = $user->tickets()->with('comments')->get();  // Add relation in User model: public function tickets() { return $this->hasMany(Ticket::class); }
+            $tickets = $user->tickets()->with('comments')->latest()->get();  // Add relation in User model: public function tickets() { return $this->hasMany(Ticket::class); }
         }
         return response()->json($tickets);
     }
@@ -31,8 +31,6 @@ class TicketController extends Controller
         ]);
 
         $ticket = Auth::user()->tickets()->create($request->only(['subject', 'description', 'category', 'priority']));
-
-        // Handle attachment
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('attachments', 'public');
             $ticket->attachments()->create(['file_path' => $path]);
@@ -43,7 +41,6 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket)
     {
-        // Authorization: Customers see only own, admins all
         if (Auth::user()->role !== 'admin' && $ticket->user_id !== Auth::id()) {
             abort(403);
         }
@@ -52,7 +49,6 @@ class TicketController extends Controller
 
     public function update(Request $request, Ticket $ticket)
     {
-        // Same auth check as show
         if (Auth::user()->role !== 'admin' && $ticket->user_id !== Auth::id()) {
             abort(403);
         }
@@ -64,7 +60,7 @@ class TicketController extends Controller
         ]);
 
         if (Auth::user()->role !== 'admin') {
-            unset($request['status']);  // Customers can't update status
+            unset($request['status']);  
         }
 
         $ticket->update($request->only(['subject', 'description', 'status']));

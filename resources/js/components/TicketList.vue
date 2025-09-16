@@ -2,12 +2,10 @@
   <div>
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2>Tickets</h2>
-      <div v-if="user">
-        <span class="me-3">Logged in as: {{ user.name }} ({{ user.role }})</span>
-      </div>
+      <button v-if="user.role === 'customer'" @click="$router.push('/tickets/create')"
+        class="btn btn-success mb-3">Create Ticket</button>
     </div>
-    
-    <button v-if="user.role === 'customer'" @click="$router.push('/tickets/create')" class="btn btn-success mb-3">Create Ticket</button>
+
     <table class="table">
       <thead>
         <tr>
@@ -23,7 +21,8 @@
           <td>{{ ticket.status }}</td>
           <td>{{ ticket.priority }}</td>
           <td>
-            <router-link :to="`/tickets/${ticket.id}`" class="btn btn-sm btn-info">View</router-link>
+            <router-link :to="`/tickets/${ticket.id}/edit`" v-if="user.role === 'customer'" class="btn btn-sm btn-warning">Edit</router-link>
+            <router-link :to="`/tickets/${ticket.id}`" class="btn btn-sm btn-info ms-2">View</router-link>
             <button @click="deleteTicket(ticket.id)" class="btn btn-sm btn-danger ms-2">Delete</button>
           </td>
         </tr>

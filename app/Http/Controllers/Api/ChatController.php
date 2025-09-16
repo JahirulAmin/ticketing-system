@@ -10,16 +10,14 @@ class ChatController extends Controller
 {
     public function index(Ticket $ticket)
     {
-        // Auth check for ticket
         if (Auth::user()->role !== 'admin' && $ticket->user_id !== Auth::id()) {
             abort(403);
         }
-        return response()->json($ticket->chats()->with('user')->latest()->get());
+        return response()->json($ticket->chats()->with('user')->get());
     }
 
     public function store(Request $request, Ticket $ticket)
     {
-        // Auth check
         if (Auth::user()->role !== 'admin' && $ticket->user_id !== Auth::id()) {
             abort(403);
         }
@@ -30,8 +28,6 @@ class ChatController extends Controller
             'user_id' => Auth::id(),
             'message' => $request->message,
         ]);
-
-        // Broadcast happens via model boot
 
         return response()->json($chat->load('user'), 201);
     }
