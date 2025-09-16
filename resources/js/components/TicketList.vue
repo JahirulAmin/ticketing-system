@@ -4,7 +4,6 @@
       <h2>Tickets</h2>
       <div v-if="user">
         <span class="me-3">Logged in as: {{ user.name }} ({{ user.role }})</span>
-        <button @click="$router.push('/tickets/create')" class="btn btn-primary">Create Ticket</button>
       </div>
     </div>
     
@@ -25,7 +24,7 @@
           <td>{{ ticket.priority }}</td>
           <td>
             <router-link :to="`/tickets/${ticket.id}`" class="btn btn-sm btn-info">View</router-link>
-            <button @click="deleteTicket(ticket.id)" class="btn btn-sm btn-danger">Delete</button>
+            <button @click="deleteTicket(ticket.id)" class="btn btn-sm btn-danger ms-2">Delete</button>
           </td>
         </tr>
       </tbody>

@@ -50,7 +50,7 @@
         </div>
 
         <!-- Messages -->
-        <div class="flex-1 min-h-[200px] max-h-[300px] px-6 py-4 space-y-4 overflow-y-auto bg-gray-50">
+        <div class="flex-1 min-h-[200px] max-h-[360px] px-6 py-4 space-y-4 overflow-y-auto bg-gray-50">
           <div v-for="chat in chats" :key="chat.id" class="flex"
             :class="chat.user.id === user.id ? 'justify-end' : 'justify-start'">
             <div :class="[
@@ -128,15 +128,16 @@ export default {
 
       // Real-time chat with Echo
       if (window.Echo) {
+        console.log('Subscribing to channel: ticket.' + route.params.id);
         window.Echo.channel(`ticket.${route.params.id}`)
-          .listen('TicketChatSent', (e) => {
+          .listen('TicketChatSent', (e) => {  
             chats.value.unshift(e.chat);
           });
       }
 
       // Poll for comments if real-time fails (fallback)
-      const pollInterval = setInterval(fetchData, 5000);
-      onUnmounted(() => clearInterval(pollInterval));
+      // const pollInterval = setInterval(fetchData, 5000);
+      // onUnmounted(() => clearInterval(pollInterval));
     });
 
     onUnmounted(() => {
