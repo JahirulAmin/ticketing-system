@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\TicketRequest;
 use App\Models\Ticket;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
@@ -20,22 +20,13 @@ class TicketController extends Controller
         return response()->json($tickets);
     }
 
-    public function store(Request $request)
+    public function store(TicketRequest $request)
     {
-        $request->validate([
-            'subject' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category' => 'required|in:technical,billing,general',
-            'priority' => 'required|in:low,medium,high',
-            'attachment' => 'nullable|file|mimes:pdf,jpg,png|max:2048',  // 2MB
-        ]);
-
         $ticket = Auth::user()->tickets()->create($request->only(['subject', 'description', 'category', 'priority']));
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('attachments', 'public');
             $ticket->attachments()->create(['file_path' => $path]);
         }
-
         return response()->json($ticket->load('attachments'), 201);
     }
 
@@ -47,17 +38,11 @@ class TicketController extends Controller
         return response()->json($ticket->load(['user', 'comments', 'attachments']));
     }
 
-    public function update(Request $request, Ticket $ticket)
+    public function update(TicketRequest $request, Ticket $ticket)
     {
         if (Auth::user()->role !== 'admin' && $ticket->user_id !== Auth::id()) {
             abort(403);
         }
-
-        $request->validate([
-            'subject' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'status' => 'sometimes|in:open,in_progress,resolved,closed',  // Only admins update status, but allow customer updates to other fields
-        ]);
 
         if (Auth::user()->role !== 'admin') {
             unset($request['status']);  
@@ -84,7 +69,7 @@ class TicketController extends Controller
         return response()->json(['status' => $ticket->status]);
     }
 
-    public function updateStatus(Request $request, Ticket $ticket)
+    public function updateStatus(TicketRequest $request, Ticket $ticket)
     {
         // Only admins
         if (Auth::user()->role !== 'admin') abort(403);
