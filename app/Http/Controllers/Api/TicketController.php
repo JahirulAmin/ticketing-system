@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\TicketRequest;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
@@ -69,7 +70,7 @@ class TicketController extends Controller
         return response()->json(['status' => $ticket->status]);
     }
 
-    public function updateStatus(TicketRequest $request, Ticket $ticket)
+    public function updateStatus(Request $request, Ticket $ticket)
     {
         // Only admins
         if (Auth::user()->role !== 'admin') abort(403);

@@ -174,10 +174,6 @@ export default {
 
         const commentsRes = await axios.get(`/api/tickets/${route.params.id}/comments`);
         comments.value = commentsRes.data;
-
-        const chatsResponse = await axios.get(`/api/tickets/${route.params.id}/chats`);
-        chats.value = chatsResponse.data;
-
         await nextTick();
         scrollMessagesToBottom();
       } catch (err) {
@@ -186,8 +182,20 @@ export default {
       }
     };
 
+    const fetchChats = async () => {
+      try {
+        const chatsRes = await axios.get(`/api/tickets/${route.params.id}/chats`);
+        chats.value = chatsRes.data;
+        await nextTick();
+        scrollMessagesToBottom();
+      } catch (err) {
+        console.error('fetchChats error', err);
+      }
+    };
+
     onMounted(() => {
       fetchData();
+      fetchChats();
       if (window.Echo) {
         window.Echo.channel(`ticket.${route.params.id}`)
           .listen('TicketChatSent', (e) => {
