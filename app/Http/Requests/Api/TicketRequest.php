@@ -22,7 +22,7 @@ class TicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
+            'subject' => 'required|string|max:255',
             'description' => 'required|string',
             'status' => 'sometimes|in:open,closed,pending',
             'priority' => 'sometimes|in:low,medium,high',
