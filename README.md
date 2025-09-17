@@ -82,8 +82,8 @@ Built with Laravel (backend), Vue.js (frontend) and Laravel Reverb for real-time
 
    The seeder creates sample accounts for testing:
 
-   - Admin: admin@webns.com / password
-   - Customer: customer@webns.com / password
+   - Admin: admin@example.com / password
+   - Customer: customer@example.com / password
 
 7. Start development servers
 
