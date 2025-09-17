@@ -21,8 +21,9 @@ Built with Laravel (backend), Vue.js (frontend) and Laravel Reverb for real-time
 
 - User authentication (login / logout)
 - Ticket creation, viewing and management
-- Real-time ticket chat (with a polling fallback)
-- Responsive UI with Bootstrap
+- Real-time comment system (with polling)
+- Real-time ticket chat (with a reverb)
+- Responsive UI with tailwind 
 
 ---
 
@@ -155,6 +156,6 @@ Key flows:
 
 ## 🙏 Acknowledgments
 
-Built with Laravel, Vue.js, Vite, Bootstrap and Laravel Reverb. Thanks to the open-source community.
+Built with Laravel, Vue.js, Vite, Bootstrap and Laravel Reverb.
 
 ---
