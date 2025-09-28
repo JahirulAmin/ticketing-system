@@ -7,7 +7,6 @@ import Pusher from 'pusher-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const token = localStorage.getItem('token');
-console.log('Initial token from localStorage:', token);
 if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
@@ -26,7 +25,6 @@ window.Echo = new Echo({
 const user = ref(null);
 const fetchUser = async () => {
   const token = localStorage.getItem('token');
-  console.log('Fetching user with token:', token);
   if (!token) {
     localStorage.removeItem('user');
     return null;
@@ -35,7 +33,6 @@ const fetchUser = async () => {
     const response = await axios.get('/api/user');
     user.value = response.data;
     localStorage.setItem('user', JSON.stringify(response.data));
-    console.log('User fetched successfully:', response.data);
     return response.data;
   } catch (error) {
     console.error('User fetch failed:', error.response ? error.response.status : error.message);

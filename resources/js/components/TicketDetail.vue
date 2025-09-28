@@ -11,7 +11,7 @@
             </div>
             <div class="text-right">
               <p class="text-sm p-0 m-0 text-gray-500">Category: <span class="font-bold">{{ ticket.category || '-'
-              }}</span></p>
+                  }}</span></p>
             </div>
           </div>
 
@@ -26,11 +26,11 @@
             </div>
             <div class="p-3 pb-0 bg-gray-50 rounded-lg">
               <p class="text-xs text-gray-500">Attachment</p>
-                <!-- loop attachments -->
-                <span v-if="ticket.attachments?.length === 0">No attachment</span>
-                <a v-for="(att, index) in ticket.attachments" :key="index" :href="att.file_path" target="_blank"
-                  class="text-blue-600 underline mr-2">Attachment {{ index + 1 }}</a>
-                
+              <!-- loop attachments -->
+              <span v-if="ticket.attachments?.length === 0">No attachment</span>
+              <a v-for="(att, index) in ticket.attachments" :key="index" :href="att.file_path" target="_blank"
+                class="text-blue-600 underline mr-2">Attachment {{ index + 1 }}</a>
+
             </div>
           </div>
           <div v-if="user.role === 'admin'" class="mt-4">
@@ -204,6 +204,7 @@ export default {
           });
       }
       const pollInterval = setInterval(fetchData, 5000);
+      const pollChatsInterval = setInterval(fetchChats, 7000);
       onUnmounted(() => clearInterval(pollInterval));
     });
 

@@ -24,14 +24,12 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const app = document.getElementById('app')?.__vue_app__;
   if (!app) {
-    console.log('App not mounted, delaying navigation');
     return next(false); // Delay until app mounts
   }
 
   const fetchUser = inject('fetchUser');
   const user = inject('user');
   if (!fetchUser || !user) {
-    console.error('Dependency injection failed');
     return next('/login');
   }
 
@@ -40,7 +38,6 @@ router.beforeEach(async (to, from, next) => {
     await fetchUser();
   }
 
-  console.log('Router guard user check:', user.value);
 
   if (user.value && (to.path === '/login' || to.path === '/register')) {
     return next('/tickets');
