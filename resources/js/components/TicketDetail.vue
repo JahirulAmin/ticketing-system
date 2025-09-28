@@ -204,7 +204,6 @@ export default {
           });
       }
       const pollInterval = setInterval(fetchData, 5000);
-      const pollChatsInterval = setInterval(fetchChats, 7000);
       onUnmounted(() => clearInterval(pollInterval));
     });
 
