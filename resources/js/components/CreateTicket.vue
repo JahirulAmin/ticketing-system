@@ -7,7 +7,7 @@
                     <form @submit.prevent="createTicket">
                         <div class="mb-3">
                             <input v-model="form.subject" type="text" class="form-control" placeholder="Subject"
-                                required>
+                                required />
                         </div>
                         <div class="mb-3">
                             <textarea v-model="form.description" class="form-control" placeholder="Description"
@@ -30,7 +30,9 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <input type="file" class="form-control" @change="e => form.attachment = e.target.files[0]">
+                            <div class="mb-3">
+                                <input type="file" class="form-control" @change="handleFileChange" />
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Create Ticket</button>
                     </form>
@@ -45,47 +47,47 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+
 export default {
     setup() {
-        const form = ref({ subject: '', description: '', category: '', priority: '', attachment: '' });
+        const form = ref({
+            subject: '',
+            description: '',
+            category: '',
+            priority: '',
+            attachment: null,
+        });
+
         const error = ref('');
         const router = useRouter();
+
+        // ✅ File input handler
+        const handleFileChange = (e) => {
+            if (!form.value) form.value = {}; // ensure form.value exists
+            form.value.attachment = e.target.files[0]; // assign selected file
+        };
 
         const createTicket = async () => {
             error.value = '';
             const formData = new FormData();
-            
-            // Add logging to check form data
-            console.log('Form data before submission:', form.value);
-            
+
             for (const key in form.value) {
-                formData.append(key, form.value[key]);
+                if (form.value[key] !== null && form.value[key] !== '') {
+                    formData.append(key, form.value[key]);
+                }
             }
-            
+
             try {
-                const res = await axios.post('/api/tickets', formData, {
-                    headers: { 
-                        'Content-Type': 'multipart/form-data',
-                        // Add Authorization header if you're using authentication
-                        // 'Authorization': 'Bearer ' + yourAuthToken
-                    }
-                });
-                console.log('Success response:', res.data);
-                router.push('/tickets');
+                const res = await axios.post('/api/tickets', formData);
+                await Promise.resolve(router.push('/tickets'));
             } catch (err) {
                 console.error('Error details:', err);
                 error.value = err.response?.data?.message || 'Failed to create ticket.';
-                // Log more detailed error information
-                if (err.response) {
-                    console.log('Error response:', {
-                        status: err.response.status,
-                        data: err.response.data
-                    });
-                }
             }
         };
 
-        return { form, error, createTicket };
-    }
+        // ✅ Return everything to template
+        return { form, error, createTicket, handleFileChange };
+    },
 };
 </script>

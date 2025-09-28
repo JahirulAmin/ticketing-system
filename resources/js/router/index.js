@@ -3,10 +3,8 @@ import Login from '../components/Login.vue';
 import Register from '../components/Register.vue';
 import TicketList from '../components/TicketList.vue';
 import TicketDetail from '../components/TicketDetail.vue';
-import CreateTicket from '../components/CreateTicket.vue';
 
 import { inject } from 'vue';
-import EditTicket from '../components/EditTicket.vue';
 
 const routes = [
   { path: '/', redirect: '/tickets' },
@@ -14,8 +12,8 @@ const routes = [
   { path: '/register', component: Register, meta: { requiresAuth: false } },
   { path: '/tickets', component: TicketList, meta: { requiresAuth: true } },
   { path: '/tickets/:id', component: TicketDetail, meta: { requiresAuth: true } },
-  { path: '/tickets/create', component: () => CreateTicket, meta: { requiresAuth: true } },
-  { path: '/tickets/:id/edit', component: () => EditTicket, meta: { requiresAuth: true } },
+  { path: '/tickets/create', component: () => import('../components/CreateTicket.vue'), meta: { requiresAuth: true } },
+  { path: '/tickets/:id/edit', component: () => import('../components/EditTicket.vue'), meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
@@ -43,7 +41,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   console.log('Router guard user check:', user.value);
-  
+
   if (user.value && (to.path === '/login' || to.path === '/register')) {
     return next('/tickets');
   }
